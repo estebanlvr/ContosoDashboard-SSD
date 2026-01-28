@@ -1,50 +1,141 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+SYNC IMPACT REPORT
+==================
+Date: 2025-01-28
+Action: Initial Constitution Creation (v0.0.0 → v1.0.0)
+
+VERSION CHANGE: 
+  • Old: N/A (from template)
+  • New: 1.0.0 (MAJOR release - initial ratification)
+  • Rationale: First complete constitution for ContosoDashboard; establishes baseline principles, technical standards, and development workflow
+
+PRINCIPLES CREATED (5/5):
+  ✅ I. Spec-Driven Development
+  ✅ II. Service-Based Architecture
+  ✅ III. Authorization & Security (NON-NEGOTIABLE)
+  ✅ IV. Infrastructure Abstraction & Cloud Migration Path
+  ✅ V. Separation of Concerns & Clean Architecture
+
+SECTIONS CREATED:
+  ✅ Core Principles (5 principles)
+  ✅ Technical Stack & Standards (6 technology requirements)
+  ✅ Development Workflow (4 workflow standards)
+  ✅ Quality Gates (Implementation & Merge gates + Architectural Constraints)
+  ✅ Governance (Amendment process, validation, guidance)
+
+TEMPLATES VALIDATION:
+  ✅ spec-template.md - Aligned (user scenarios, acceptance criteria, independent testability)
+  ✅ plan-template.md - Aligned (includes Constitution Check gate)
+  ✅ tasks-template.md - Aligned (user story organization, independent tasks)
+  ✅ checklist-template.md - Aligned (quality validation across domains)
+
+DEPENDENT FILES - NO UPDATES REQUIRED:
+  ✅ .github/agents/*.md - Already reference constitution validation
+  ✅ .github/prompts/*.md - Already guide agents through workflow
+  ✅ .specify/scripts/* - Automate workflow enforcement
+  ✅ README.md - Documentation already reflects constitutional principles
+
+VALIDATION RESULTS:
+  ✅ No unresolved placeholder tokens
+  ✅ All 5 principle slots filled
+  ✅ All dates in ISO format (YYYY-MM-DD)
+  ✅ Principles are declarative and testable
+  ✅ Version string matches: 1.0.0
+  ✅ Ratification date: 2025-01-28
+  ✅ Last amended: 2025-01-28
+
+DEFERRED ITEMS: None
+
+NEXT STEPS:
+  1. Commit constitution with suggested message
+  2. Begin feature development using /speckit.specify workflow
+  3. All features will be validated against Constitution Check in planning phase
+-->
+
+# ContosoDashboard Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Spec-Driven Development
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Every feature MUST start with a comprehensive written specification before any code is written. Specifications MUST include user scenarios, acceptance criteria, and architecture decisions. All specifications MUST be stored in the `specs/[###-feature-name]/` directory following the standard template. Specifications cannot be purely internal or organizational—each feature MUST deliver measurable user value.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Service-Based Architecture
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+All business logic MUST be implemented as injected services (IUserService, ITaskService, etc.). Service layer MUST handle all authorization checks and prevent IDOR vulnerabilities. Data access MUST be encapsulated through Entity Framework Core with models and relationships defined in the Data layer. No direct controller/page access to database context.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Authorization & Security (NON-NEGOTIABLE)
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Authorization enforcement is mandatory on all protected pages using `[Authorize]` attributes. Role-Based Access Control (RBAC) MUST follow the four-tier hierarchy: Administrator > ProjectManager > TeamLead > Employee. Service layer MUST validate user permissions before data access—authorization checks cannot be optional. IDOR protection MUST be implemented by verifying user membership/ownership at service layer.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Infrastructure Abstraction & Cloud Migration Path
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+All infrastructure dependencies (database, file storage, identity) MUST be abstracted behind interfaces enabling local/cloud switching. Training implementations MUST work offline: LocalDB/SQLite for databases, local filesystem for file storage, cookie-based mock auth. Production migration requires only implementation swaps via dependency injection—no business logic changes.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Separation of Concerns & Clean Architecture
+
+Project structure MUST follow clear layering: Models (entities) → Data (DbContext/EF) → Services (business logic) → Pages/Razor Components (UI). Cross-cutting concerns (logging, error handling) MUST be handled in middleware or service decorators. No business logic in page code-behind. UI components MUST be stateless where possible.
+
+## Technical Stack & Standards
+
+**Framework & Language**: ASP.NET Core 8.0 with C# required. Blazor Server for interactive UI components.
+
+**Database**: SQLite for development; Entity Framework Core 8.0 for ORM. Production: Azure SQL Database (implementation swap only).
+
+**Authentication/Authorization**: Cookie-based mock authentication for training. Production: Microsoft Entra ID (Azure AD) with OAuth 2.0/OpenID Connect.
+
+**UI Framework**: Blazor Server with Bootstrap 5.3 for styling. No client-side SPA frameworks required for this project.
+
+**File Storage**: Local filesystem outside `wwwroot` for training. Production: Azure Blob Storage with interface abstraction.
+
+**Database Migrations**: Entity Framework Code-First approach. Migrations MUST be versioned and committed. `dotnet-ef` CLI required for migration management.
+
+## Development Workflow
+
+**Spec-Driven Cadence**: Features follow the workflow: Specify → Clarify → Plan → Tasks → Checklists → Implement.
+
+**Branch Naming**: `[###-feature-name]` format where `###` is a sequential number (e.g., `1-document-upload`). Branch MUST correspond to spec number.
+
+**Commit Messages**: MUST reference feature number and include summary. Example: `feat(1-document-upload): implement file upload endpoint`.
+
+**Code Review**: All PRs MUST include reference to feature spec and validation against constitution. Code that bypasses service layer, skips authorization checks, or violates architectural boundaries MUST be rejected.
+
+**Testing**: Service layer unit tests REQUIRED for all new business logic. Integration tests REQUIRED for cross-service interactions and authorization flows. `[Authorize]` attribute enforcement MUST be tested.
+
+**Database Updates**: Always use migrations. Direct schema changes are prohibited. Seeded data changes MUST be documented in migration comments.
+
+## Quality Gates
+
+**Mandatory Before Implementation**:
+- ✅ Specification approved and in `specs/[###]/spec.md`
+- ✅ Constitution Check passed (no architectural violations)
+- ✅ Plan.md with data model and contracts generated
+- ✅ Tasks.md with granular development tasks
+
+**Mandatory Before Merge**:
+- ✅ All tests passing (unit + integration)
+- ✅ All checklists (UX, security, testing, performance) completed
+- ✅ Code review approved with constitutional compliance
+- ✅ No IDOR vulnerabilities (authorization verified at service layer)
+- ✅ Documentation updated (README, spec completion)
+
+**Architectural Constraints**:
+- Service injection is REQUIRED; no tight coupling
+- Authorization checks MUST be in service layer, not pages
+- Infrastructure abstractions MUST be honored (no hardcoding implementations)
+- Database access ONLY through DbContext
+- No direct SQL queries without EF-Core wrapper
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other documentation and practices. All feature development MUST comply with these principles. Constitution violations MUST be documented and justified in PR comments with explicit sign-off from project lead.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Amendment Process**: Constitution changes require a dedicated amendment spec (`constitution-amendment.md`) with ratification date, version bump (semantic versioning), and impact assessment on existing features and templates.
+
+**Compliance Validation**: The `speckit.constitution` agent MUST validate all feature specs, plans, and implementation against this constitution before approval.
+
+**Guidance Documentation**: Runtime development guidance lives in `.specify/` scripts and templates. Constitution defines principles; templates define structure; scripts automate workflow.
+
+---
+
+**Version**: 1.0.0 | **Ratified**: 2025-01-28 | **Last Amended**: 2025-01-28
